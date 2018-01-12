@@ -1,0 +1,170 @@
+<!doctype html>
+<html class="state-initial">
+  <head>
+    <title>Registration for duwww</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <style>
+      html {
+        height: 100%;
+      }
+      body {
+        margin-top: 0;
+        height: 100%;
+      }
+      .container {
+        height: 100%;
+      }
+      .content {
+        min-height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .cube-container {
+        width: 400px;
+      }
+      h1 {
+        font-weight: lighter;
+        line-height: 1.2;
+        margin-bottom: 20px;
+      }
+
+      .status {
+        margin-top: 20px;
+        height: 50px;
+      }
+
+      .state-initial .status-progress, .state-initial .status-success, .state-initial .status-error {
+        display: none;
+      }
+
+      .state-progress .status-progress {
+        display: block;
+      }
+
+      .state-progress .status-success, .state-progress .status-error {
+        display: none;
+      }
+
+      .state-success .status-success {
+        display: block;
+      }
+
+      .state-success .status-error, .state-success .status-progress {
+        display: none;
+      }
+
+      .state-error .status-error {
+        display: block;
+      }
+
+      .state-error .status-success, .state-error .status-progress {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <div class="cube-container">
+          <div class="regform">
+            <h1>Create User for duwww</h1>
+            <form method="post">
+              <div class="form-group">
+                <label for="inpEmail">Email address</label>
+                <input type="email" class="form-control" name="email" id="inpEmail" placeholder="Email" required autofocus>
+              </div>
+              <div class="form-group">
+                <label for="inpPassword">Password</label>
+                <input type="password" class="form-control" name="password" id="inpPassword" placeholder="Password" required>
+              </div>
+              <div class="form-group">
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" name="disableRegistration" id="chkDisable" checked>
+                  <label class="form-check-label" for="chkDisable">Disable user creation after submission</label>
+                </div>
+              </div>
+              <button class="btn btn-lg btn-primary btn-block" type="submit" class="submit">Create User</button>
+              <div class="status">
+                <div class="status-progress">
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 100%"></div>
+                  </div>
+                </div>
+                <div class="status-success">
+                  <div class="alert alert-success">
+                    User successfully created.<span class="disabled-user-creation"> User creation is now disabled.</span>
+                  </div>
+                </div>
+                <div class="status-error">
+                  <div class="alert alert-danger">
+                    <b>User was not created.</b> <span class="error-message"></span>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+    <script>
+      function clearState() {
+        $('html').removeClass('state-initial state-error state-success state-progress')
+      }
+      $('form').on('submit', function(event) {
+        event.preventDefault()
+        $('.submit').prop('disabled', true)
+        clearState()
+        $('html').addClass('state-progress')
+        var body = {
+          email: $('#inpEmail').val(),
+          password: $('#inpPassword').val(),
+          disableRegistration: $('#chkDisable').prop('checked')
+        }
+
+        var json = JSON.stringify(body)
+
+        var req = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: json
+        }
+
+        fetch('/register', req).then(function(response) {
+          if(response.status === 404) {
+            throw new Error('Could not find registration endpoint. Is user creation disabled?')
+          } else if(response.status !== 200) {
+            throw new Error('[HTTP ' + response.status + '] An unknown error occured.')
+          }
+          return response.json()
+        }).then(function(response) {
+          if(response.success) {
+            if(response.disableRegistration) {
+              $('.disabled-user-creation').css('display', 'inline')
+            } else {
+              $('.disabled-user-creation').css('display', 'none')
+            }
+            clearState()
+            $('html').addClass('state-success')
+            $('.submit').prop('disabled', false)
+            $('form')[0].reset()
+          } else {
+            throw new Error(response.reason)
+          }
+        }).catch(function(err) {
+          $('.error-message').text(err.message)
+          clearState()
+          $('html').addClass('state-error')
+          $('.submit').prop('disabled', false)
+        })
+      })
+    </script>
+  </body>
+</html>
