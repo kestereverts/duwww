@@ -8,7 +8,7 @@ const mime = require('mime')
 const readChunk = require('read-chunk')
 const fileType = require('file-type')
 const md5File = require('md5-file/promise')
-const isBinaryFile = require('../isBinaryFile')
+const isBinaryFile = require('../isbinaryfile')
 
 const router = express.Router()
 
