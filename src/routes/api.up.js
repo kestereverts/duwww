@@ -135,7 +135,7 @@ router.post('/', upload, middleware.db, middleware.user, async (req, res, next) 
           return
         }
 
-        res.end(`1,${process.env.URL_PREFIX}${base62.encode.emoji(id)},${id},${bytesWritten}`)
+        res.end(`1,${process.env.URL_PREFIX}${base62.encode(id)},${id},${bytesWritten}`)
         debug('Upload has been succesfully finalized')
       } catch (e) {
         next(e)
