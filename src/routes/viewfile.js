@@ -28,7 +28,7 @@ router.get(route('/translate'), (req, res, next) => {
     } else if (idEmojiRegExp.test(req.params.id)) {
       res.end(base62.encode(base62.decode.emoji(req.params.id)))
     } else {
-      res.end('Not a valid id.')
+      next('route')
     }
   } catch (e) {
     next(e)
