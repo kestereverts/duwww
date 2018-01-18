@@ -245,8 +245,10 @@ function handlePuushUpload (options) {
       req.file = new File(stream, fieldname, filename, transferEncoding, mimeType, options.uploadDir)
       req.file.on('abort', () => {
         req.unpipe(busboy)
+        busboy.removeAllListeners()
         try {
-          busboy.end()
+          // can't do this due to busboy bug
+          // busboy.end()
         } catch (e) {
           debugU(e)
         }
@@ -268,8 +270,10 @@ function handlePuushUpload (options) {
         req.file.abort()
       } else {
         req.unpipe(busboy)
+        busboy.removeAllListeners()
         try {
-          busboy.end()
+          // can't do this due to busboy bug
+          // busboy.end()
         } catch (e) {
           debugU(e)
         }
