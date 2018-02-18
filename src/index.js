@@ -7,7 +7,7 @@ const db = require('./db')
 ;(async function () {
   debug(`Environment: ${process.env.NODE_ENV}`)
   if (!process.env.DB) {
-    process.env.DB = path.resolve(os.homedir(), 'duwww2.db')
+    process.env.DB = path.resolve(os.homedir(), 'duwww.db')
   }
   process.env.DB = path.resolve(process.cwd(), process.env.DB)
 
@@ -31,7 +31,7 @@ const db = require('./db')
   debug(`Max file size: ${process.env.MAX_FILE_SIZE} bytes`)
 
   const app = require('./server')
-  app.listen(process.env.SOCKET || 80)
+  app.listen(process.env.SOCKET || 8080)
 
   if (process.setuid && process.env.RUN_AS) {
     process.setuid(process.env.RUN_AS)
