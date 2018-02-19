@@ -7,12 +7,12 @@ const db = require('./db')
 ;(async function () {
   debug(`Environment: ${process.env.NODE_ENV}`)
   if (!process.env.DB) {
-    process.env.DB = path.resolve(os.homedir(), 'duwww.db')
+    process.env.DB = path.resolve(os.homedir(), 'duwww', 'data', 'duwww.db')
   }
   process.env.DB = path.resolve(process.cwd(), process.env.DB)
 
   if (!process.env.UPLOAD_FOLDER) {
-    process.env.UPLOAD_FOLDER = path.resolve(os.homedir(), 'duwww', 'uploads')
+    process.env.UPLOAD_FOLDER = path.resolve(os.homedir(), 'duwww', 'data', 'uploads')
   }
   process.env.UPLOAD_FOLDER = path.resolve(process.cwd(), process.env.UPLOAD_FOLDER)
 
