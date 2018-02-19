@@ -23,11 +23,7 @@ COPY . .
 
 EXPOSE 8080
 
-RUN mkdir -p /root/duwww/data
-
 ENV NODE_ENV=production
 ENV DEBUG=*
-
-
 
 CMD [ "node", "src/index.js" ]
