@@ -23,9 +23,7 @@ COPY . .
 
 EXPOSE 8080
 
-USER node
-
-RUN mkdir -p /home/node/duwww/data
+RUN mkdir -p /root/duwww/data
 
 ENV NODE_ENV=production
 ENV DEBUG=*
