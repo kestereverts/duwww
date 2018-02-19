@@ -3,6 +3,12 @@ FROM node:9
 # Create app directory
 WORKDIR /usr/src/app
 
+# Add Tini
+ENV TINI_VERSION v0.17.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
@@ -19,7 +25,11 @@ EXPOSE 8080
 
 USER node
 
-ENV NODE_ENV=development
+RUN mkdir -p /home/node/duwww/data
+
+ENV NODE_ENV=production
 ENV DEBUG=*
+
+
 
 CMD [ "node", "src/index.js" ]
