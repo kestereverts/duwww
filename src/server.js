@@ -4,6 +4,7 @@ const express = require('express')
 
 const app = express()
 app.set('x-powered-by', false)
+app.set('trust proxy', 'loopback')
 
 app.on('droppedPrivileges', () => {
   app.set('views', path.resolve(__dirname, '..', 'views'))
