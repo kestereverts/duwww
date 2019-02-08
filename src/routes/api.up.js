@@ -15,7 +15,7 @@ const router = express.Router()
 async function randomId () {
   let value
   do {
-    value = (await randomBytes(3)).readUInt32BE(0, true)
+    value = (await randomBytes(4)).readUInt32BE(0, true) & 0xFFFFFF
   } while (value >= 14776336)
   return value
 }
