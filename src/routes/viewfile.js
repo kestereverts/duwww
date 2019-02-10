@@ -4,6 +4,7 @@ const middleware = require('./middleware')
 const path = require('path')
 const base62 = require('../base62')
 const mime = require('mime')
+const fs = require('fs-extra')
 
 const router = express.Router()
 
@@ -37,12 +38,32 @@ router.get(route('/translate'), (req, res, next) => {
 
 // router.get(new RegExp(`${}`))
 
-router.get(route('/'), middleware.db, middleware.findUpload, (req, res, next) => {
+router.get(route('/'), middleware.db, middleware.findUpload, async (req, res, next) => {
   try {
     if (!req.upload) {
       debug('Upload not found in db or invalid id.')
       next('route')
       return
+    }
+
+    if (typeof req.upload.ttl === 'number') {
+      if ((Date.now() - req.upload.timestamp) / 1000 > req.upload.ttl) {
+        debug('Upload has to be deleted because time to live expired.')
+        try {
+          await fs.unlink(path.join(process.env.UPLOAD_FOLDER, 'finished') + '/' + req.upload.location)
+          await req.db.run(`
+            DELETE FROM upload WHERE id = $id
+            `, {
+              $id: req.upload.id
+            }
+          )
+          debug('File deleted.')
+          next('route')
+          return
+        } catch (e) {
+          debug(e)
+        }
+      }
     }
 
     let contentType = req.upload.mediaType
