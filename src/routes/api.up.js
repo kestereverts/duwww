@@ -88,6 +88,16 @@ router.post('/', upload, middleware.db, middleware.user, async (req, res, next) 
 
         debug(`Is binary file? ${isBinary}`)
 
+        let ttl = null
+        if (typeof req.body.ttl === 'string') {
+          const userTtl = parseInt(req.body.ttl)
+          if (!Number.isNaN(userTtl) && userTtl >= 0) {
+            ttl = userTtl
+          }
+        }
+
+        debug(`Time to live been given? ${ttl}`)
+
         try {
           await req.file.move(path.join(process.env.UPLOAD_FOLDER, 'finished'))
         } catch (e) {
@@ -105,8 +115,8 @@ router.post('/', upload, middleware.db, middleware.user, async (req, res, next) 
             debug(`random id: ${id}`)
 
             await req.db.run(`
-              INSERT INTO upload (id, owner, originalName, processedOriginalName, mediaType, isBinary, size, md5hash, location, timestamp)
-              VALUES ($id, $owner, $originalName, $processedOriginalName, $mediaType, $isBinary, $size, $md5hash, $location, $timestamp)
+              INSERT INTO upload (id, owner, originalName, processedOriginalName, mediaType, isBinary, size, md5hash, location, timestamp, ttl)
+              VALUES ($id, $owner, $originalName, $processedOriginalName, $mediaType, $isBinary, $size, $md5hash, $location, $timestamp, $ttl)
               `, {
                 $id: id,
                 $owner: req.user.id,
@@ -117,7 +127,8 @@ router.post('/', upload, middleware.db, middleware.user, async (req, res, next) 
                 $size: bytesWritten,
                 $md5hash: md5hash,
                 $location: path.basename(req.file.filePath),
-                $timestamp: Date.now()
+                $timestamp: Date.now(),
+                $ttl: ttl
               }
             )
             inserted = true
