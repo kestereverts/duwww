@@ -90,7 +90,7 @@ router.post('/', upload, middleware.db, middleware.user, async (req, res, next) 
 
         let ttl = null
         if (typeof req.body.ttl === 'string') {
-          const userTtl = parseInt(req.body.ttl)
+          const userTtl = parseInt(req.body.ttl, 10)
           if (!Number.isNaN(userTtl) && userTtl >= 0) {
             ttl = userTtl
           }
