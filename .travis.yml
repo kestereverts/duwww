@@ -1,0 +1,20 @@
+dist: xenial
+language: node_js
+node_js:
+  - "11"
+  - "10"
+  - "9"
+  - "8"
+
+install:
+  - npm install
+
+deploy:
+  provider: script
+  script: "cp .npmrc $HOME/.npmrc && npm publish"
+  skip_cleanup: true
+  on:
+    tags: true
+
+notifications:
+  irc: "ircs://irc.androidirc.org:6697/#duwww"
