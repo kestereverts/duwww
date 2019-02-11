@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const path = require('path')
 const debug = require('debug')('duwww:index')
 const os = require('os')
