@@ -1,6 +1,6 @@
 {
   "name": "duwww",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A puush.me proxy written in Node.js.",
   "main": "src/index.js",
   "bin": {
